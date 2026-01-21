@@ -11,9 +11,14 @@ namespace BootcampCLT.Api
     public class ProductoController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public ProductoController(IMediator mediator)
+        private readonly ILogger<ProductoController> _logger;
+
+        public ProductoController(
+            IMediator mediator,
+            ILogger<ProductoController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         /// <summary>
@@ -25,7 +30,11 @@ namespace BootcampCLT.Api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<List<ProductoResponse>>> GetAllProductos()
         {
+            _logger.LogInformation("Obteniendo todos los productos activos.");
+
             var result = await _mediator.Send(new GetProductosQuery());
+
+            _logger.LogInformation("Se obtuvieron {Cantidad} productos.", result.Count);
             return Ok(result);
         }
 

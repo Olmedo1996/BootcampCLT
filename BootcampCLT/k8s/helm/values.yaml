@@ -1,0 +1,31 @@
+﻿replicaCount: 3
+
+applicationName: NOMBRE-DE-TU-APLICACION-DESDE-VALUES-YAML
+
+swagger:
+  title: BootcampCLT API - DESDE VALUES.YAML
+  description: API para la gestión de productos en BootcampCLT - DESDE VALUES.YAML
+  
+image:
+  repository: olmedo1996/bootcampclt-api
+  tag: "1.2"
+  pullPolicy: IfNotPresent
+
+app:
+  containerPort: 8080
+  env:
+    aspnetcoreEnvironment: Development
+ 
+service:
+  type: NodePort
+  port: 80
+  targetPort: 8080
+ 
+postgres:
+  host: postgres-svc
+  port: 5432
+  database: CatalogoCLT
+  username: postgres
+  password: "a.123456"   # Para demo local. En equipos reales, no commitear.
+
+ 

@@ -1,5 +1,6 @@
 using BootcampCLT.Infraestructure.Context;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,12 @@ builder.Services.AddDbContext<PostgresDbContext>(options =>
 //MediaR
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(GetProductoByIdHandler).Assembly));
+
+builder.Host.UseSerilog((ctx, services, lc) =>
+    lc.ReadFrom.Configuration(ctx.Configuration)
+      .ReadFrom.Services(services)
+      .Enrich.FromLogContext()
+);
 
 // Necesario para Swagger clásico
 builder.Services.AddEndpointsApiExplorer();
