@@ -4,5 +4,6 @@ using MediatR;
 
 namespace BootcampCLT.Application.Command
 {
-    public record CreateProductoCommand(CreateProductoRequest Request) : IRequest<ProductoResponse>;
+    public record UpdateProductoCommand(int Id, UpdateProductoRequest Request)
+        : IRequest<ProductoResponse?>;
 }

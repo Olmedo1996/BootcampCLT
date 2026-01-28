@@ -1,5 +1,6 @@
 ﻿using BootcampCLT.Api.Request;
 using BootcampCLT.Api.Response;
+using BootcampCLT.Application.Command;
 using BootcampCLT.Application.Query;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -62,14 +63,13 @@ namespace BootcampCLT.Api
         /// </summary>
         /// <param name="request">Datos del producto a crear.</param>
         /// <returns>Producto creado.</returns>
-        //[HttpPost("v1/api/productos")]
-        //[ProducesResponseType(typeof(ProductoResponse), StatusCodes.Status201Created)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public ActionResult<ProductoResponse> CreateProducto([FromBody] CreateProductoRequest request)
-        //{
-        //    return Created(string.Empty, null);
-        //}
+        [HttpPost("v1/api/productos")]
+        [ProducesResponseType(typeof(ProductoResponse), StatusCodes.Status201Created)]
+        public async Task<ActionResult<ProductoResponse>> CreateProducto([FromBody] CreateProductoRequest request)
+        {
+            var result = await _mediator.Send(new CreateProductoCommand(request));
+            return CreatedAtAction(nameof(GetProductoById), new { id = result.Id }, result);
+        }
 
         /// <summary>
         /// Actualiza completamente un producto existente.
@@ -81,11 +81,16 @@ namespace BootcampCLT.Api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<ProductoResponse> UpdateProducto(
+        public async Task<ActionResult<ProductoResponse>> UpdateProducto(
             [FromRoute] int id,
             [FromBody] UpdateProductoRequest request)
         {
-            return Ok();
+            var result = await _mediator.Send(new UpdateProductoCommand(id, request));
+
+            if (result is null)
+                return NotFound();
+
+            return Ok(result);
         }
 
         /// <summary>
@@ -99,11 +104,16 @@ namespace BootcampCLT.Api
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<ProductoResponse> PatchProducto(
+        public async Task<ActionResult<ProductoResponse>> PatchProducto(
             [FromRoute] int id,
             [FromBody] PatchProductoRequest request)
         {
-            return Ok();
+            var result = await _mediator.Send(new PatchProductoCommand(id, request));
+
+            if (result is null)
+                return NotFound();
+
+            return Ok(result);
         }
 
         /// <summary>
@@ -114,8 +124,13 @@ namespace BootcampCLT.Api
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult DeleteProducto([FromRoute] int id)
+        public async Task<IActionResult> DeleteProducto(int id)
         {
+            var deleted = await _mediator.Send(new DeleteProductoCommand(id));
+
+            if (!deleted)
+                return NotFound();
+
             return NoContent();
         }
     }

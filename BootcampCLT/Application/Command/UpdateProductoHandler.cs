@@ -1,37 +1,37 @@
 ﻿using BootcampCLT.Api.Response;
 using BootcampCLT.Infraestructure.Context;
-using BootcampCLT.Infraestructure.Domain;
 using Microsoft.EntityFrameworkCore;
 using MediatR;
 
 namespace BootcampCLT.Application.Command
 {
-    public class CreateProductoHandler : IRequestHandler<CreateProductoCommand, ProductoResponse>
+    public class UpdateProductoHandler : IRequestHandler<UpdateProductoCommand, ProductoResponse?>
     {
         private readonly PostgresDbContext _context;
 
-        public CreateProductoHandler(PostgresDbContext postgresDbContex)
+        public UpdateProductoHandler(PostgresDbContext postgresDbContex)
         {
             _context = postgresDbContex;
         }
 
-        public async Task<ProductoResponse> Handle(
-            CreateProductoCommand request,
+        public async Task<ProductoResponse?> Handle(
+            UpdateProductoCommand request,
             CancellationToken cancellationToken)
         {
-            var entity = new Producto
-            {
-                Codigo = request.Request.Codigo,
-                Nombre = request.Request.Nombre,
-                Descripcion = request.Request.Descripcion,
-                Precio = request.Request.Precio,
-                Activo = request.Request.Activo,
-                CategoriaId = request.Request.CategoriaId,
-                FechaCreacion = DateTime.UtcNow,
-                CantidadStock = 0
-            };
+            var entity = await _context.Productos
+                .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
 
-            _context.Productos.Add(entity);
+            if (entity is null)
+                return null;
+
+            entity.Codigo = request.Request.Codigo;
+            entity.Nombre = request.Request.Nombre;
+            entity.Descripcion = request.Request.Descripcion;
+            entity.Precio = request.Request.Precio;
+            entity.Activo = request.Request.Activo;
+            entity.CategoriaId = request.Request.CategoriaId;
+            entity.FechaActualizacion = DateTime.UtcNow;
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return new ProductoResponse(
@@ -48,4 +48,5 @@ namespace BootcampCLT.Application.Command
             );
         }
     }
+
 }

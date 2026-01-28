@@ -10,6 +10,3 @@
         public int? CategoriaId { get; init; }
     }
 }
-
-
-// del profesor
