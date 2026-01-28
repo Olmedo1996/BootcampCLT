@@ -1,5 +1,21 @@
 # BootcampCLT
 
+PARA LEVANTAR EL PROYECTO
+
+el proyecto se encuentra en 
+```bash
+BootcampCLT/
+```
+Se encuentra en el lugar la base de datos, la diferencia con el proyecto es el **nombre de la DB** ahora **CatalogoCLT**
+
+```bash
+BootcampCLT\scriptDB.sql
+```
+
+
+
+
+# ANOTACIONES PERSONALES (para levantar postgres en docker DB: CatalogoCLT)
 
 ## DOCKER SETUP FOR POSTGRESQL
 docker run --name scp-postgres -e POSTGRES_PASSWORD=a.123456 -p 5432:5432 -d postgres
@@ -13,43 +29,3 @@ docker network connect bootcampclt-network scp-postgres
 docker network connect bootcampclt-network <bootcampclt-container-id>
 
 
-
-## ARCHIVO DEPLOYMENT.YML PARA KUBERNETES
-```yaml
-apiVersion: apps/v1
-
-kind: Deployment
-
-metadata:
-
-  name: postgres
-
-spec:
-
-  replicas: 1
-
-  selector:
-
-    matchLabels:
-
-      app: postgres
-
-  template:
-    metadata
-      labels:
-        app: postgres
-    spec:
-      containers:
-        - name: postgres
-          image: postgres:16
-          ports:
-            - containerPort: 5432
-          env:
-            - name: POSTGRES_DB
-              value: "hardwareCLT"
-            - name: POSTGRES_USER
-              value: "postgres"
-            - name: POSTGRES_PASSWORD
-              value: "a.123456"
-```
- 

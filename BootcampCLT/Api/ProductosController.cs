@@ -31,12 +31,23 @@ namespace BootcampCLT.Api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<List<ProductoResponse>>> GetAllProductos()
         {
-            _logger.LogInformation("Obteniendo todos los productos activos.");
+            _logger.LogInformation("Inicio GetAllProductos");
 
-            var result = await _mediator.Send(new GetProductosQuery());
+            try
+            {
+                var result = await _mediator.Send(new GetProductosQuery());
 
-            _logger.LogInformation("Se obtuvieron {Cantidad} productos.", result.Count);
-            return Ok(result);
+                _logger.LogInformation(
+                    "GetAllProductos completado. Cantidad={Cantidad}",
+                    result.Count);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener el listado de productos");
+                throw;
+            }
         }
 
         /// <summary>
@@ -50,12 +61,29 @@ namespace BootcampCLT.Api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ProductoResponse>> GetProductoById([FromRoute] int id)
         {
-            var result = await _mediator.Send(new GetProductoByIdQuery(id));
+            _logger.LogInformation("Inicio GetProductoById. ProductoId={ProductoId}", id);
 
-            if (result is null)
-                return NotFound();
+            try
+            {
+                var result = await _mediator.Send(new GetProductoByIdQuery(id));
 
-            return Ok(result);
+                if (result is null)
+                {
+                    _logger.LogWarning( "Producto no encontrado. ProductoId={ProductoId}", id);
+
+                    return NotFound();
+                }
+
+                _logger.LogInformation("Producto obtenido correctamente. ProductoId={ProductoId}", id);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener producto. ProductoId={ProductoId}", id);
+
+                throw;
+            }
         }
 
         /// <summary>
@@ -67,8 +95,28 @@ namespace BootcampCLT.Api
         [ProducesResponseType(typeof(ProductoResponse), StatusCodes.Status201Created)]
         public async Task<ActionResult<ProductoResponse>> CreateProducto([FromBody] CreateProductoRequest request)
         {
-            var result = await _mediator.Send(new CreateProductoCommand(request));
-            return CreatedAtAction(nameof(GetProductoById), new { id = result.Id }, result);
+            _logger.LogInformation("Inicio CreateProducto. Codigo={Codigo}", request.Codigo);
+
+            try
+            {
+                var result = await _mediator.Send(new CreateProductoCommand(request));
+
+                _logger.LogInformation(
+                    "Producto creado correctamente. ProductoId={ProductoId}, Codigo={Codigo}",
+                    result.Id,
+                    result.Codigo);
+
+                return CreatedAtAction(nameof(GetProductoById), new { id = result.Id }, result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error al crear producto. Codigo={Codigo}",
+                    request.Codigo);
+
+                throw;
+            }
         }
 
         /// <summary>
@@ -85,12 +133,36 @@ namespace BootcampCLT.Api
             [FromRoute] int id,
             [FromBody] UpdateProductoRequest request)
         {
-            var result = await _mediator.Send(new UpdateProductoCommand(id, request));
+            _logger.LogInformation("Inicio UpdateProducto. ProductoId={ProductoId}",id);
 
-            if (result is null)
-                return NotFound();
+            try
+            {
+                var result = await _mediator.Send(new UpdateProductoCommand(id, request));
 
-            return Ok(result);
+                if (result is null)
+                {
+                    _logger.LogWarning(
+                        "Producto no encontrado para actualizar. ProductoId={ProductoId}",
+                        id);
+
+                    return NotFound();
+                }
+
+                _logger.LogInformation(
+                    "Producto actualizado correctamente. ProductoId={ProductoId}",
+                    id);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error al actualizar producto. ProductoId={ProductoId}",
+                    id);
+
+                throw;
+            }
         }
 
         /// <summary>
@@ -108,12 +180,36 @@ namespace BootcampCLT.Api
             [FromRoute] int id,
             [FromBody] PatchProductoRequest request)
         {
-            var result = await _mediator.Send(new PatchProductoCommand(id, request));
+            _logger.LogInformation( "Inicio PatchProducto. ProductoId={ProductoId}", id);
 
-            if (result is null)
-                return NotFound();
+            try
+            {
+                var result = await _mediator.Send(new PatchProductoCommand(id, request));
 
-            return Ok(result);
+                if (result is null)
+                {
+                    _logger.LogWarning(
+                        "Producto no encontrado para patch. ProductoId={ProductoId}",
+                        id);
+
+                    return NotFound();
+                }
+
+                _logger.LogInformation(
+                    "Producto actualizado parcialmente. ProductoId={ProductoId}",
+                    id);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error al actualizar parcialmente producto. ProductoId={ProductoId}",
+                    id);
+
+                throw;
+            }
         }
 
         /// <summary>
@@ -126,15 +222,33 @@ namespace BootcampCLT.Api
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteProducto(int id)
         {
-            var deleted = await _mediator.Send(new DeleteProductoCommand(id));
+            _logger.LogInformation("Inicio DeleteProducto. ProductoId={ProductoId}", id);
 
-            if (!deleted)
-                return NotFound();
+            try
+            {
+                var deleted = await _mediator.Send(new DeleteProductoCommand(id));
 
-            return NoContent();
+                if (!deleted)
+                {
+                    _logger.LogWarning("Producto no encontrado para eliminar. ProductoId={ProductoId}", id);
+
+                    return NotFound();
+                }
+
+                _logger.LogInformation( "Producto eliminado correctamente. ProductoId={ProductoId}", id);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error al eliminar producto. ProductoId={ProductoId}",
+                    id);
+
+                throw;
+            }
+
         }
     }
 }
-
-
-// del profesor
