@@ -13,8 +13,6 @@ BootcampCLT\scriptDB.sql
 ```
 
 
-
-
 # ANOTACIONES PERSONALES (para levantar postgres en docker DB: CatalogoCLT)
 
 ## DOCKER SETUP FOR POSTGRESQL
