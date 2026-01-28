@@ -71,3 +71,24 @@ Captura del acceso al panel web de Seq mostrando los logs generados por la aplic
 ![Seq logs](seq/02_SEQ.png)
 
 
+##  CI/CD
+
+Esta sección evidencia el flujo de integración y despliegue continuo (CI/CD) realizado con GitHub Actions, Docker y Helm en Minikube.
+
+### 1️⃣ Configuración del Runner en Windows
+![Runner configuración](cicd/01_configuracion_runner_en_windows.png)
+
+### 2️⃣ Runner registrado en GitHub
+![Runner en GitHub](cicd/02_runner_equipo_en_github.png)
+
+### 3️⃣ Estado del Pod antes del commit
+![Pod antes del commit](cicd/03_descripcion_pod_antes_del_commit_githubaction.png)
+
+### 4️⃣ Commit ejecutándose en Actions
+![Commit en Actions](cicd/04_commit_mostrandose_en_actions.png)
+
+### 5️⃣ CI/CD completado con éxito
+![CI/CD completado](cicd/05_cicd_completado_con_exito.png)
+
+### 6️⃣ Estado del Pod con el tag aplicado
+![Pod con tag](cicd/06_descripcion_del_pod_con_el_tag.png)
